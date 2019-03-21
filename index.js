@@ -1,22 +1,14 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const app = express()
-const db = require('./queries')
-const port = 3000
+/* @flow */
 
-app.use(bodyParser.json())
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
-)
+// Allows you to precompile ES6 syntax
+require('@babel/register');
 
-app.get('/', (request, response) => {
-  response.json({ info: 'Node.js, Express, and Postgres API' })
-})
+// Setup global variables for server-side
+global.__CLIENT__ = false;
+global.__SERVER__ = true;
+global.__DEV__ = process.env.NODE_ENV === 'development';
 
-app.get('/users', db.getUsers)
-
-app.listen(port, () => {
-  console.log(`App running on port ${port}.`)
-})
+// Run assets require hooks
+require('./tools/webpack/hooks')();
+// Run server
+require('./src/server');
